@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/UserPermissionsN5NOW.API/Dockerfile
+    image: "fbeltrami/user-permission"
+    container_name: "user-permission-api"
+    ports:
+      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT}:443"
+    environment: # defined for run.sh to access the ports
+      - HTTP_PORT=${HTTP_PORT}
+      - HTTPS_PORT=${HTTPS_PORT}
+    env_file:
+      - src/UserPermissionsN5NOW.API/list.env
+    volumes:
+      - ~/.aspnet/https:/https:ro
+      - user-db-data:/app/Data
+      - ./src/N5NOW.UserPermissionsN5NOW.UserPermissions.API/run.sh:/app/run.sh:ro
+    entrypoint: ["/bin/sh", "/app/run.sh"]
+
+volumes:
+  user-db-data:
